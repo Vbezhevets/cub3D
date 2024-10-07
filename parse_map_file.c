@@ -170,26 +170,7 @@ int is_border(char **map, int y, int x, int y_max, int x_max)
 	return (0);
 }
 
-int init_player(t_scene *scene, char direct, int y,  int x)
-{
-	t_player	*p;
 
-	p = malloc(sizeof(t_player));
-	if (!p)
-		return (1);// 
-	p->y = y * SEGM + SEGM / 2;
-    p->x = x * SEGM + SEGM / 2;
-	if (direct == 'N')
-		p->angle = PI / 2;
-	if (direct == 'E')
-		p->angle = 0;
-	if (direct == 'W')
-		p->angle = PI;
-	if (direct == 'S')
-		p->angle = PI * 1.5; //270
-	scene->p = p;
-	return (0);
-}
 
 int check_map(char **map, int y_max, int x_max, t_scene *scene)
 {

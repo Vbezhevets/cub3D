@@ -21,10 +21,10 @@ void    move_right(t_scene *scene)
 
 void    turn_left(t_scene *scene)
 {
-	scene->p->angle =  scene->p->angle - PI / 10;
+	scene->p->angle =  scene->p->angle + PI / 10;
 }
 
 void    turn_right(t_scene *scene)
 {
-	scene->p->angle =  scene->p->angle + PI / 10;
+	scene->p->angle =  scene->p->angle - PI / 10;
 }
