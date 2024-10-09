@@ -42,7 +42,7 @@ void draw_2d_map(t_scene *scene, int y, int x)
 		x = 0;
 		while(x < scene->map_width)
 		{
-			if (scene->map[y][x] == '1')
+			if (scene->map[y][x] == WALL)
 				draw_segm(scene, scene->map_img, x * SEGM, y * SEGM, WALL2D);
 			else
 				draw_segm(scene, scene->map_img, x * SEGM, y * SEGM, CELL2D);
@@ -50,18 +50,22 @@ void draw_2d_map(t_scene *scene, int y, int x)
 		}
 		y++;
 	}
-	draw_player(scene);
+	printf("\n y: %d, x: %d!!!\n", scene->p->y,scene->p->x);
+
+	draww_point(scene, scene->p->y, scene->p->x, PLAYERC);
+
+	calc_ray(scene);
 }
 
 t_image	*create_mlx_img(t_scene *scene)
 {
-	t_image *image;	
+	t_image *image;
 
 	image = malloc(sizeof(t_image));
 	if (!image)
 		exit (err("image alloc error\n")); // freeeeeee
 	image->img = mlx_new_image(scene->mlx, SEGM * scene->map_width, SEGM * scene->map_height);
-	if (!image->img) 
+	if (!image->img)
 		exit(err("image error\n")); // freee
 	image->addr = mlx_get_data_addr(image->img, &image->bpp, &image->line_l, &image->endian);
 	return (image);
@@ -79,14 +83,15 @@ int	mlx_stop(t_scene *scene, int status)
 }
 int	key_pressed(int key, t_scene *scene)
 {
+	update_dir(scene, scene->p);
 	if (key == W)
-		move_forward(scene);
+		move_forward(scene, scene->p->angle);
 	if (key == S)
-		move_back(scene);
+		move_back(scene, scene->p->angle);
 	if (key == A)
-		move_left(scene);
+		move_left(scene, scene->p->angle);
 	if (key == D)
-		move_right(scene);
+		move_right(scene, scene->p->angle);
 	if (key == TURN_L)
 		turn_left(scene);
 	if (key == TURN_R)

@@ -14,9 +14,6 @@
 
 # define MAP_EXT ".cub"
 
-typedef struct s_ray
-{
-}	t_ray;
 
 typedef		struct s_text
 {
@@ -45,18 +42,27 @@ typedef struct s_player
 	int		y;
 	int		x;
 	double	angle;
-	int		next_hor_y;
-	int		next_hor_x;
-	int		next_vert_y;
-	int		next_vert_x;
-	// int		v_x; //vector
-	// int		v_y; //vector
 	int		x_dir;
 	int		y_dir;
 }	t_player;
 
+typedef struct s_ray
+{
+	// double	angle;
+
+	int		vert_dist;
+	int		next_vert_y;
+	int		next_vert_x;
+
+	int		hor_dist;
+	int		next_hor_y;
+	int		next_hor_x;
+
+}	t_ray;
+
 typedef 	struct s_scene
 {
+
 	t_text		*texts[4];
 	int			parsed_t;
 	int			floor_rgb[3];
@@ -70,6 +76,8 @@ typedef 	struct s_scene
 
 	t_player	*p;
 
+	t_ray		*ray;
+
 	void		*mlx;
 	void		*win_2d;
 	t_image		*map_img;
@@ -80,7 +88,11 @@ typedef 	struct s_scene
 
 }					t_scene;
 
-# define    SEGM 40
+
+# define    WALL '1'
+
+# define    SEGM 100
+# define	STEP 10
 # define    CELL2D 0x00D3D3D3
 # define    WALL2D 0x008B8B8B
 # define    PLAYERC 0x00FF0000
@@ -102,20 +114,28 @@ int		check_and_load_scene(char *path, t_scene  *scene);
 int		start_mlx(t_scene *scene);
 void    mlx_put_pixel(t_image *image, int y, int x, int color, t_scene *scene);
 
-void	draw_player(t_scene *scene);
+double	update_dir(t_scene *scene, t_player *p);
+
+int		init_player(t_scene *scene, char direct, int y, int x);
+void	calc_ray(t_scene *scene);
 
 
 int		ft_strsetchr(char *str, char *set);
+int		is_inside_map(t_scene *scene, int x, int y);
+int		not_wall(t_scene *scene, int x, int y, char *str);
+
+void	draww_point(t_scene *scene,  int  y, int x, int color);
+
 
 void	free_null_text(t_scene *scene, int i);
 int		err(char *str);
 void 	free_and_nul(char **s);
 void 	free_and_nnul(char **s, int i);
 
-void    move_forward(t_scene *scene);
-void    move_back(t_scene *scene);
-void    move_left(t_scene *scene);
-void    move_right(t_scene *scene);
+void    move_forward(t_scene *scene, double angle);
+void    move_back(t_scene *scene, double angle);
+void    move_left(t_scene *scene, double angle);
+void    move_right(t_scene *scene, double angle);
 void    turn_left(t_scene *scene);
 void    turn_right(t_scene *scene);
 

@@ -185,7 +185,7 @@ int check_map(char **map, int y_max, int x_max, t_scene *scene)
 		{
 			if (map[y][x] != ' ' && map[y][x] != '\n')
 			{
-				if (is_border(map, y, x, y_max - 1, x_max) &&  map[y][x] != '1')
+				if (is_border(map, y, x, y_max - 1, x_max) &&  map[y][x] != WALL)
 					return (printf("x: %d,   y: %d,   = %c\n",x , y ,map[y][x]), 1);
 				if (ft_strchr("NSEW", map[y][x]) && scene->pl_qty--)
 					if (init_player(scene, map[y][x], y, x))
