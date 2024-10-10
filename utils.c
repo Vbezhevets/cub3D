@@ -29,51 +29,73 @@ int		is_inside_map(t_scene *scene, int x, int y)
     return (0);
 }
 
+int get_x_dir(double angle)
+{
+	if ((angle > 0 && angle <= PI / 2) || (angle >= PI * 1.5 && angle <= PI * 2))
+		return 1;
+	else 
+		return -1;
+}
+int get_y_dir(double angle)
+{
+	if ((angle >= PI && angle <= PI * 2))
+		return 1;
+	else 
+		return -1;
+}
 
-int not_wall(t_scene *scene, int x, int y, char *str)
+double update_dir(t_scene *scene, t_player *p)
+{
+
+	p->x_dir = get_x_dir(p->angle);
+	p->y_dir = get_y_dir(p->angle);
+
+	if (p->angle == 0)
+	{
+		p->y_dir = 1;
+		p->x_dir = 1;
+	}
+	p->angle = fmod(p->angle, PI * 2);
+	if (p->angle < 0)
+		p->angle = p->angle + PI * 2;
+}
+
+int not_wall(t_scene *scene, int x, int y)
 {
 	t_player	*p;
     int         add_x;
-    int         add_y = 0;
 
 	p = scene->p;
     if (p->x_dir == -1)
         add_x = -1;
     else
         add_x = 0;
-    if (p->y_dir == -1)
-        add_y = -1;
-    else
-        add_y = 0;
 
-	if(scene->map[y / SEGM ][x / SEGM + add_x] != WALL) //  + p->y_dir +
+	if(scene->map[y / SEGM ][x / SEGM + add_x] != WALL)
     	return(1);
     return (0);
 }
 
-int not_wall_hor(t_scene *scene, int x, int y, char *str)
+int not_wall_hor(t_scene *scene, int x, int y)
 {
 	t_player	*p;
-    int         add_x = 0;
-    int         add_y = 0;
+    int         add_y;
 
 	p = scene->p;
 	update_dir(scene, p);
 
-    // if (p->x_dir == -1)
-    //     add_x = -1;
-    // else
-    //     add_x = 0;
     if (p->y_dir == -1)
         add_y = -1;
     else
         add_y = 0;
 
 
-	if(scene->map[y / SEGM + add_y][x / SEGM] != WALL) //  + p->y_dir +
-    	return(1);
+	if(scene->map[y / SEGM + add_y][x / SEGM] != WALL)
+        return (1);
+    	// return(printf("i thing y %d and x %d ARE NOT A WALL\n", y / SEGM + add_y , x / SEGM), 1);
     else
-	    return (0);
+        return (0);
+	    // return(printf("i thing y %d and x %d IS A WALL!\n", y / SEGM + add_y , x / SEGM), 0);
 }
 
 void draww_point(t_scene *scene, int y, int  x, int color)

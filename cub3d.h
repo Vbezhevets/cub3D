@@ -48,7 +48,7 @@ typedef struct s_player
 
 typedef struct s_ray
 {
-	// double	angle;
+	double	angle;
 
 	int		vert_dist;
 	int		next_vert_y;
@@ -97,6 +97,7 @@ typedef 	struct s_scene
 # define    WALL2D 0x008B8B8B
 # define    PLAYERC 0x00FF0000
 # define    FOV 60
+# define    SQR_WIDTH
 # define	PI 3.1415926
 # define	V 70 //px (hypotinuse) ray vector 2d vis 
 
@@ -114,15 +115,18 @@ int		check_and_load_scene(char *path, t_scene  *scene);
 int		start_mlx(t_scene *scene);
 void    mlx_put_pixel(t_image *image, int y, int x, int color, t_scene *scene);
 
-double	update_dir(t_scene *scene, t_player *p);
 
 int		init_player(t_scene *scene, char direct, int y, int x);
 void	calc_ray(t_scene *scene);
+int		get_x_dir(double angle);
+int		get_y_dir(double angle);
+double	update_dir(t_scene *scene, t_player *p);
 
 
 int		ft_strsetchr(char *str, char *set);
 int		is_inside_map(t_scene *scene, int x, int y);
-int		not_wall(t_scene *scene, int x, int y, char *str);
+int		not_wall(t_scene *scene, int x, int y);
+int		not_wall_hor(t_scene *scene, int x, int y);
 
 void	draww_point(t_scene *scene,  int  y, int x, int color);
 
@@ -132,12 +136,12 @@ int		err(char *str);
 void 	free_and_nul(char **s);
 void 	free_and_nnul(char **s, int i);
 
-void    move_forward(t_scene *scene, double angle);
-void    move_back(t_scene *scene, double angle);
-void    move_left(t_scene *scene, double angle);
-void    move_right(t_scene *scene, double angle);
-void    turn_left(t_scene *scene);
-void    turn_right(t_scene *scene);
+void	move_forward(t_scene *scene, double	angle, int x_dir, int y_dir);
+void	move_back(t_scene *scene, double angle, int x_dir, int y_dir);
+void	move_left(t_scene *scene, double angle);
+void	move_right(t_scene *scene, double angle);
+void	turn_left(t_scene *scene);
+void	turn_right(t_scene *scene);
 
 
 

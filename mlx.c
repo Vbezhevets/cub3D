@@ -37,6 +37,8 @@ void draw_segm(t_scene *scene, t_image *image, int x_start, int y_start, int col
 
 void draw_2d_map(t_scene *scene, int y, int x)
 {
+	int	i;
+
 	while(y < scene->map_height )
 	{
 		x = 0;
@@ -50,11 +52,12 @@ void draw_2d_map(t_scene *scene, int y, int x)
 		}
 		y++;
 	}
-	printf("\n y: %d, x: %d!!!\n", scene->p->y,scene->p->x);
-
 	draww_point(scene, scene->p->y, scene->p->x, PLAYERC);
-
-	calc_ray(scene);
+	i = -1;
+	// while (++i < WIDTH/ 10)
+	// {
+		calc_ray(scene);
+	// }
 }
 
 t_image	*create_mlx_img(t_scene *scene)
@@ -85,9 +88,9 @@ int	key_pressed(int key, t_scene *scene)
 {
 	update_dir(scene, scene->p);
 	if (key == W)
-		move_forward(scene, scene->p->angle);
+		move_forward(scene, scene->p->angle, get_x_dir(scene->p->angle), get_y_dir(scene->p->angle));
 	if (key == S)
-		move_back(scene, scene->p->angle);
+		move_back(scene, scene->p->angle, get_x_dir(scene->p->angle), get_y_dir(scene->p->angle));
 	if (key == A)
 		move_left(scene, scene->p->angle);
 	if (key == D)
