@@ -99,7 +99,6 @@ void calc_ray(t_scene *scene)
 }
 
 
-работало с y
 int not_wall(t_scene *scene, int x, int y, char *str)
 {
 	t_player	*p;
@@ -127,3 +126,6 @@ int not_wall(t_scene *scene, int x, int y, char *str)
 	    return (0);
     }
 }
+
+	printf("ray->vert_dist %d\n", ray->vert_dist);
+	printf("ray->hor_dist %d\n", ray->hor_dist);

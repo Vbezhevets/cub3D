@@ -37,33 +37,33 @@ int parse_texts(t_scene *scene, char *str, t_text **loaded, int i)
 	// i++;
 	// while (str[i] && (str[i] == ' ' || str[i] == '\t'  || str[i] == ','  || ft_isdigit(str[i])))
 	// 	i++;
-int parse_cfcolor(char *str, t_scene *scene, int k, int res)
+int parse_cfcolor(char *str, t_scene *scene, int k, int sum)
 {
 	char	**spl;
+	int		temp;
 
 	if (!scene->parsed_c || *str != 'F' && *str != 'C')
 		return (0);
 	spl = ft_split(str  + 1, ',');
+	if (!spl || spl[3] != NULL)
+		return (free_and_nul(spl), 1);
 	while (spl[k])
 	{
-		if (*str == 'F')
-		{
-			scene->floor_rgb[k] = ft_atoi(spl[k]);
-			if (scene->floor_rgb[k] < 0 || scene->floor_rgb[k] > 255)
-				res = 1;
-		}
-		if (*str == 'C')
-		{
-			scene->ceiling_rgb[k] = ft_atoi(spl[k]);
-			if (scene->ceiling_rgb[k] < 0 || scene->ceiling_rgb[k] > 255)
-				res = 1;
-		}
+		temp =  ft_atoi(spl[k]);
+		if (temp < 0 || temp > 255)
+			return (free_and_nul(spl), 1);
+		sum  += (temp / 16) * pow(16, 5 - k * 2);
+		sum  += (temp % 16) * pow(16, 5 - k * 2 + 1); //printf("n %d\n", 5 - k * 2 - 1);
 		k++;
 		scene->parsed_c--;
 	}
+	if (*str == 'F')
+	{	scene->floor_rgb = sum; printf("floor %d\n", sum);}
+	if (*str == 'C')
+	{	scene->ceiling_rgb = sum; printf("ceiling %d\n", sum);}
 	free_and_nul(spl);
 	free(spl);
-	return(res);
+	return(0);
 }
 
 int parse_before_map(char *str, t_scene *scene)

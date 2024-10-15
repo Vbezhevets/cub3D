@@ -50,10 +50,12 @@ void    move_right(t_scene *scene, double angle)
 
 void    turn_left(t_scene *scene)
 {
-	scene->p->angle =  scene->p->angle + PI / 10; // radians
+	scene->p->angle =  scene->p->angle + PI / 20; // radians
+	scene->p->angle = update_ang(scene->p->angle);
 }
 
 void    turn_right(t_scene *scene)
 {
-	scene->p->angle =  scene->p->angle - PI / 10;
+	scene->p->angle = scene->p->angle - PI / 20;
+	scene->p->angle = update_ang(scene->p->angle);
 }
