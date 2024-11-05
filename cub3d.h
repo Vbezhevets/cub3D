@@ -16,16 +16,20 @@
 
 # define    WALL '1'
 
-# define    SEGM 100
+# define    SEGM 50
 # define	STEP 10
 # define    CELLC 0x00D3D3D3
 # define    WALLC 0x008B8B8B
 # define    PLAYERC 0x00FF0000
-# define    WIDTH 640
-# define    HEIGHT 480
+# define    WIDTH 1280 // 640
+# define    HEIGHT 960 //480
 # define	PI 3.1415926
 # define    FOV 1.047
 # define    VFOV 0.87
+
+#define		T_WIDTH 80//751
+#define		T_HEIGHT 80//749
+
 
 # define	V 70 //px (hypotinuse) ray vector 2d vis 
 
@@ -37,12 +41,6 @@
 # define	TURN_R 65363
 # define 	ESC 65307
 
-
-typedef		struct s_text
-{
-	char	*key;
-	char	*path;
-}			t_text;
 
 typedef		struct s_map_line
 {
@@ -59,6 +57,13 @@ typedef struct s_image
 	int		endian;
 }		t_image;
 
+typedef		struct s_text
+{
+	char	*key;
+	char	*path;
+	t_image	*txt_image;
+	// char	*txt_data;
+}			t_text;
 
 typedef struct s_player
 {
@@ -121,13 +126,14 @@ typedef 	struct s_scene
 
 
 int		check_and_load_scene(char *path, t_scene  *scene);
-
+void	load_text(t_scene *scene);
 int		start_mlx(t_scene *scene);
 void    mlx_put_pixel_to_map(int y, int x, int color, t_scene *scene);
 
 
 int		init_player(t_scene *scene, char direct, int y, int x);
 void	calc_ray(t_scene *scene, int, double angle);
+void	calc_rays(t_scene *scene);
 int		get_x_dir(double angle);
 int		get_y_dir(double angle);
 double	update_ang(double angle);
@@ -136,11 +142,11 @@ void	update_dir(t_scene *scene, t_ray *ray);
 
 int		ft_strsetchr(char *str, char *set);
 int		is_inside_map(t_scene *scene, int x, int y);
-int		not_wall(t_scene *scene, int x, int y, t_ray *ray);
+int		not_wall_vert(t_scene *scene, int x, int y, t_ray *ray);
 int		not_wall_hor(t_scene *scene, int x, int y, t_ray *ray);
 
 void	draww_point(t_scene *scene,  int  y, int x, int color);
-
+void	draw_2d_map(t_scene *scene, int y, int x);
 
 void	free_null_text(t_scene *scene, int i);
 int		err(char *str);

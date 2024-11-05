@@ -10,7 +10,7 @@ int init_player(t_scene *scene, char direct, int y,  int x)
 
 	p = malloc(sizeof(t_player));
 	if (!p)
-		return (1);// 
+		return (1);
 	p->y = y * SEGM + SEGM / 2;
     p->x = x * SEGM + SEGM / 2;
 	if (direct == 'N')
@@ -51,7 +51,7 @@ int find_next_hor(t_scene *scene, t_ray *ray, int from_x, int from_y)
 	ray->next_hor_x = (int)(dist_to_next_hor_intersect * sin(ray->angle + PI / 2) + (from_x));
 
 	return (dist_to_next_hor_intersect);
-} 
+}
 
 t_ray	*ray_init(t_scene *scene, t_ray *ray, double angle)
 {
@@ -59,7 +59,7 @@ t_ray	*ray_init(t_scene *scene, t_ray *ray, double angle)
 	// if 
 	ray->angle = angle;
 	update_dir(scene, ray);
-	
+
 	if (ray->y_dir == -1)
 		ray->y_dir = 0;
 
@@ -83,7 +83,7 @@ void calc_ray(t_scene *scene, int i, double angle)
 	draww_point(scene, ray->next_hor_y, ray->next_hor_x, 0x000000FF);
 
 	while (is_inside_map(scene, ray->next_vert_x, ray->next_vert_y) &&
-		not_wall(scene, ray->next_vert_x, ray->next_vert_y, ray))
+		not_wall_vert(scene, ray->next_vert_x, ray->next_vert_y, ray))
 		{
 			ray->vert_dist += find_next_vert(scene, ray, ray->next_vert_x, ray->next_vert_y);
 			draww_point(scene, ray->next_vert_y, ray->next_vert_x, 0x00FF00FF);
@@ -107,6 +107,45 @@ void calc_ray(t_scene *scene, int i, double angle)
 		}
 }
 
+void	calc_rays(t_scene *scene)
+{
+	int		i;
+	double	angle;
+
+	i = WIDTH - 1;
+	angle = scene->p->angle -  FOV / 2;
+	while (i >= 0)
+	{
+		angle = update_ang(angle);
+		calc_ray(scene, i, angle );
+		angle +=  FOV / WIDTH;
+		i--;
+	}
+}
+/*
+void calc_ray(t_scene *scene, int i, double angle)
+{
+	t_player	*p;
+	t_ray		*ray;
+
+	ray = ray_init(scene, ray, angle);
+	if (ray)
+		scene->ray[i] = ray;
+	// else //
+
+	while (is_inside_map(scene, ray->next_vert_x, ray->next_vert_y) &&
+		not_wall(scene, ray->next_vert_x, ray->next_vert_y, ray))
+			ray->vert_dist += find_next_vert(scene, ray, ray->next_vert_x, ray->next_vert_y);
+	while (is_inside_map(scene, ray->next_hor_x, ray->next_hor_y) &&
+		not_wall_hor(scene, ray->next_hor_x, ray->next_hor_y, ray))
+			ray->hor_dist += find_next_hor(scene, ray, ray->next_hor_x, ray->next_hor_y);
+
+	if (fabs(ray->vert_dist) < fabs(ray->hor_dist))
+			ray->dist = ray->vert_dist;
+	else
+			ray->dist = ray->hor_dist;
+}
+ */
 // cos(angle) = (v_x - p->x) / V 
 
 // v_x - p->x = V * cos(angle);

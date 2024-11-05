@@ -38,18 +38,18 @@ void draw_bg(t_scene *scene, int y, int x)
 
 void	draw_3d(t_scene *scene, int y, int x)
 {
-	int	strap;
+	double	strap;
 	int i;
+	int color; // temporary
 
 	i = 0;
 	draw_bg(scene, 0, 0);
 
 	while (x < WIDTH)
 	{
-	
+		strap = HEIGHT * 20 / (scene->ray[x]->dist  *  cos(scene->p->angle - scene->ray[x]->angle));
 		while(y < strap)
 		{
-			strap =   HEIGHT * (20 * tan(VFOV)) / scene->ray[x]->dist ;
 			// printf("strap - %d, ray dist %d, ", strap, scene->ray[WIDTH / 2]->dist);
 			mlx_put_pixel_to_3d( HEIGHT / 2 + y, x, WALLC, scene);
 			mlx_put_pixel_to_3d( HEIGHT / 2 - y, x, WALLC, scene);

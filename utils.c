@@ -40,7 +40,7 @@ int get_y_dir(double angle)
 {
 	if (angle >= PI && angle <= PI * 2 || angle == 0)
 		return 1;
-	else 
+	else
 		return -1;
 }
 
@@ -66,12 +66,12 @@ void update_dir(t_scene *scene, t_ray *ray)
 	ray->angle = update_ang(ray->angle);
 }
 
-int not_wall(t_scene *scene, int x, int y, t_ray *ray)
+int not_wall_vert(t_scene *scene, int x, int y, t_ray *ray)
 {
     int	add_x;
 
 	update_dir(scene, ray);
-    if (ray->x_dir == -1)
+    if (ray->x_dir == -1 && x > 0)
         add_x = -1;
     else
         add_x = 0;
@@ -85,7 +85,7 @@ int not_wall_hor(t_scene *scene, int x, int y, t_ray *ray)
     int	add_y;
 
 	update_dir(scene, ray);
-    if (ray->y_dir == -1)
+    if (ray->y_dir == -1 && y > 0)
         add_y = -1;
     else
         add_y = 0;
@@ -95,7 +95,7 @@ int not_wall_hor(t_scene *scene, int x, int y, t_ray *ray)
         return (0);
 }
 
-void draww_point(t_scene *scene, int y, int  x, int color)
+void draww_point(t_scene *scene,int y,int  x,int color)
 {
     int d = 30;
     int maxy = y + SEGM / d;

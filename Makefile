@@ -10,7 +10,7 @@ LIBDIR	= ./libft
 LIBFT	= $(LIBDIR)/libft.a
 
 SRCS    := main.c	 errors_frees.c parse_map_file.c utils.c mlx.c \
-					ray.c moves.c draw_3d.c
+					ray.c moves.c draw_3d.c text.c draw_2d.c
 OBJS    := $(SRCS:.c=.o)
 
 %.o : %.c

@@ -25,7 +25,6 @@ void text_init(t_scene  *scene)
 	int	i;
 
 	char	*texts[4];
-
 	texts[0] = "NO";
 	texts[1] = "SO";
 	texts[2] = "WE";
@@ -45,13 +44,13 @@ void text_init(t_scene  *scene)
 		i++;
 		scene->parsed_t = i;
 	}
-	scene->parsed_c = 6;
+	scene->parsed_c = 6; // colors
 }
 
 int init(t_scene  *scene)
 {
 	text_init(scene);
-	scene->map = NULL;	
+	scene->map = NULL;
 	scene->map_list = NULL;
 	scene->map_height = 1;
 	scene->pl_qty = 1;
@@ -64,9 +63,9 @@ int main (int argc, char **argv)
     t_scene  scene;
 
 	init(&scene);
-	
+
 	if (argc != 2)
-		printf("poshel naher\n");
+		printf("give me the map\n");
     if (argc != 2 || load_scene_file(argv[1], &scene))
 		exit(err("load map error\n")); // free
 	start_mlx(&scene);

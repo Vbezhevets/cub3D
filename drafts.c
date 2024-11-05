@@ -69,7 +69,7 @@ void calc_ray(t_scene *scene)
 	ray->next_vert_x = p->x;
 	ray->next_vert_y = p->y;
 
-	ray->vert_dist = find_next_vert(scene, ray, p->x, p->y); 
+	ray->vert_dist = find_next_vert(scene, ray, p->x, p->y);1
 	ray->hor_dist = find_next_hor(scene, ray, p->x, p->y);
 
 	while (is_inside_map(scene, ray->next_vert_x, ray->next_vert_y) &&

@@ -6,80 +6,53 @@
 #include <math.h>
 
 
-int parse_texts(t_scene *scene, char *str, t_text **loaded, int i)
-{
-	int l;
-
-	while (++i < 4 && scene->parsed_t)
-	{
-		if (!ft_strncmp(loaded[i]->key, str, 2))
-		{
-			if (loaded[i]->path)
-				return(err("dublicate texture?? No\n"));
-			str += 2;
-			while (*str && (*str == ' '))
-				str++;
-			l = ft_strlen(str);
-			while (l && (str[l] == ' '))
-				l--;
-			if (!l)
-				return(err("text string error\n"), i);
-			loaded[i]->path = malloc(sizeof(char) * (l + 1));
-			if (!loaded[i]->path)
-				return(err("mlc error\n"), i);
-			ft_strcpy(loaded[i]->path, str);
-			scene->parsed_t--;
-		}
-	}
-	return (0);
-}
 
 	// i++;
 	// while (str[i] && (str[i] == ' ' || str[i] == '\t'  || str[i] == ','  || ft_isdigit(str[i])))
 	// 	i++;
-int parse_cfcolor(char *str, t_scene *scene, int k, int sum)
-{
-	char	**spl;
-	int		temp;
 
-	if (!scene->parsed_c || *str != 'F' && *str != 'C')
-		return (0);
-	spl = ft_split(str  + 1, ',');
-	if (!spl || spl[3] != NULL)
-		return (free_and_nul(spl), 1);
-	while (spl[k])
-	{
-		temp =  ft_atoi(spl[k]);
-		if (temp < 0 || temp > 255)
-			return (free_and_nul(spl), 1);
-		sum  += (temp / 16) * pow(16, 5 - k * 2);
-		sum  += (temp % 16) * pow(16, 5 - k * 2 + 1); //printf("n %d\n", 5 - k * 2 - 1);
-		k++;
-		scene->parsed_c--;
-	}
-	if (*str == 'F')
-	{	scene->floor_rgb = sum; printf("floor %d\n", sum);}
-	if (*str == 'C')
-	{	scene->ceiling_rgb = sum; printf("ceiling %d\n", sum);}
-	free_and_nul(spl);
-	free(spl);
-	return(0);
+int is_border(char **map, int y, int x, int y_max, int x_max)
+{
+	if (y == 0 || (map[y - 1][x] == ' '))
+		return (1);
+	if (x == 0 || (map[y][x - 1] == ' '))
+		return (1);
+	if (x == x_max || (map[y][x + 1] == ' '))
+		return (1);
+	if (y == y_max || map[y + 1][x] == ' ')
+		return(1);
+	return (0);
 }
 
-int parse_before_map(char *str, t_scene *scene)
+int check_map(char **map, int y_max, int x_max, t_scene *scene)
 {
-	int i;
+	int	y;
+	int	x;
 
-	while (*str && (*str == ' '))
-		str++;
-	if (!str || '\n' == str[0])
-		return (0);
-	// if (scene->parsed_t)
-	i = parse_texts(scene, str, scene->texts, -1);
-
-	if (i || parse_cfcolor(str, scene, 0, 0) || scene->parsed_c < 0	)
-		return (free_null_text(scene, i), get_next_line(-42), err("texture error\n"));	
-	return (0);
+	y = 0;
+	while(y < y_max)
+	{
+		x = 0;
+		while (x < x_max - 1)
+		{
+			if (map[y][x] != ' ' && map[y][x] != '\n')
+			{
+				if (is_border(map, y, x, y_max - 1, x_max) &&  map[y][x] != WALL)
+					return (printf("x: %d,   y: %d,   = %c\n",x , y ,map[y][x]), 1);
+				if (ft_strchr("NSEW", map[y][x]) && scene->pl_qty--)
+					if (!scene->pl_qty)
+					{
+						if (init_player(scene, map[y][x], y, x))
+							return (err("alloc p error"));
+					}
+					else
+						return (err("more than than 1 player?\n"));
+			}
+			x++;
+		}
+		y++;
+	}
+	return (scene->pl_qty);
 }
 
 int map_to_array(t_scene *scene, t_map_line *list)
@@ -132,11 +105,11 @@ int load_list_map(t_scene *scene, int fd, char *line)
 {
 	t_map_line	*temp;
 	t_map_line	*map_line;
-	
+
 	while (line)
 	{
 		if (ft_strsetchr(line, "10NSEW \n"))
-			return (err("wrong symbol - "));
+			return (err("the map has wrong symbol(s)"));
 		temp = line_init(line, scene);
 		if (!temp)
 			return(err("alloc error\n"));
@@ -157,46 +130,80 @@ int load_list_map(t_scene *scene, int fd, char *line)
 	return (0);
 }
 
-int is_border(char **map, int y, int x, int y_max, int x_max)
+
+
+int parse_cfcolor(char *str, t_scene *scene, int k, int sum)
 {
-	if (y == 0 || (map[y - 1][x] == ' '))
-		return (1);
-	if (x == 0 || (map[y][x - 1] == ' '))
-		return (1);
-	if (x == x_max || (map[y][x + 1] == ' '))
-		return (1);
-	if (y == y_max || map[y + 1][x] == ' ')
-		return(1);
+	char	**spl;
+	int		temp;
+
+	if (!scene->parsed_c || *str != 'F' && *str != 'C')
+		return (0);
+	spl = ft_split(str  + 1, ',');
+	if (!spl || spl[3] != NULL)
+		return (free_and_nul(spl), 1);
+	while (spl[k])
+	{
+		temp =  ft_atoi(spl[k]);
+		if (temp < 0 || temp > 255)
+			return (free_and_nul(spl), 1);
+		sum  += (temp / 16) * pow(16, 5 - k * 2);
+		sum  += (temp % 16) * pow(16, 5 - k * 2 + 1); //printf("n %d\n", 5 - k * 2 - 1);
+		k++;
+		scene->parsed_c--;
+	}
+	if (*str == 'F')
+	{	scene->floor_rgb = sum; printf("floor %d\n", sum);}
+	if (*str == 'C')
+	{	scene->ceiling_rgb = sum; printf("ceiling %d\n", sum);}
+	free_and_nul(spl);
+	free(spl);
+	return(0);
+}
+
+int parse_texts(t_scene *scene, char *str, t_text **loaded, int i)
+{
+	int l;
+
+	while (++i < 4 && scene->parsed_t)
+	{
+		if (!ft_strncmp(loaded[i]->key, str, 2))
+		{
+			if (loaded[i]->path)
+				return(err("dublicate texture?? No\n"));
+			str += 2;
+			while (*str && (*str == ' '))
+				str++;
+			l = ft_strlen(str);
+			while (l && (str[l] == ' '))
+				l--;
+			if (!l)
+				return(err("text string error\n"), i);
+			loaded[i]->path = malloc(sizeof(char) * (l + 1));
+			if (!loaded[i]->path)
+				return(err("mlc error\n"));
+			ft_strcpy(loaded[i]->path, str);
+			scene->parsed_t--;
+		}
+	}
 	return (0);
 }
 
-
-
-int check_map(char **map, int y_max, int x_max, t_scene *scene)
+int parse_before_map(char *str, t_scene *scene)
 {
-	int	y;
-	int	x;
+	int i;
 
-	y = 0;
-	while(y < y_max)
-	{	
-		x = 0;
-		while (x < x_max - 1)
-		{
-			if (map[y][x] != ' ' && map[y][x] != '\n')
-			{
-				if (is_border(map, y, x, y_max - 1, x_max) &&  map[y][x] != WALL)
-					return (printf("x: %d,   y: %d,   = %c\n",x , y ,map[y][x]), 1);
-				if (ft_strchr("NSEW", map[y][x]) && scene->pl_qty--)
-					if (init_player(scene, map[y][x], y, x))
-						return (err("alloc p error"));
-			}
-			x++;
-		}
-		y++;
-	}
-	return (scene->pl_qty);
+	while (*str && (*str == ' '))
+		str++;
+	if (!str || '\n' == str[0])
+		return (0);
+	// if (scene->parsed_t)
+	i = parse_texts(scene, str, scene->texts, -1);
+	if (i || parse_cfcolor(str, scene, 0, 0) || scene->parsed_c < 0	)
+		return (free_null_text(scene, i), get_next_line(-42), err("texture error\n"));
+	return (0);
 }
+
 
 
 int check_and_load_scene(char *path, t_scene  *scene)
@@ -216,7 +223,7 @@ int check_and_load_scene(char *path, t_scene  *scene)
 	if (load_list_map(scene, fd, get_next_line(fd)))
 		return(close(fd), err("map error\n"));
 	if (map_to_array(scene, scene->map_list))
-		return (close(fd), 1);	
+		return (close(fd), 1);
 	if (check_map(scene->map, scene->map_height, scene->map_width, scene))
 		return (err("wrong map!!\n"), close(fd), 1);
 	scene->map_width--;
